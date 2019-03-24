@@ -1,0 +1,56 @@
+<!-- Copyright 2017 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file. -->
+<html>
+  <head>
+    <title>Water Popup</title>
+    <style>
+      body {
+        text-align: center;
+      }
+
+      #hydrateImage {
+        width: 100px;
+        margin: 5px;
+      }
+
+      button {
+        margin: 5px;
+        outline: none;
+      }
+	  #create_reservations, #settings_credentials {
+		border-style: solid;
+		border-width: small;
+	  }
+    </style>
+  </head>
+  <body>
+	<div style="display:none"  id="settings_credentials" >
+		 Username: <input type="text" id="c_username"><br>
+		 Password: <input type="password" id="c_password"><br>
+		 <button id="i_update_credentials">Reset Them</button>
+	</div>
+	
+	<div style="display:none"  id="create_reservations" >
+		 Day:   <select name="class_day" id="class_day">
+					<option value="Monday">Monday</option>
+					<option value="Tuesday">Tuesday</option>
+					<option value="Wednesday">Wednesday</option>
+					<option value="Thursday">Thursday</option>
+					<option value="Friday">Friday</option>
+					<option value="Saturday">Saturday</option>
+					<option value="Sunday">Sunday</option>
+				  </select><br/>
+		 Hour: <input type="time" id="class_time"><br/>
+		 Class(parallel classes): <input type="text" id="class_name"><br/>
+		 <button id="i_add_reservation">Add Reservation</button>
+	</div>
+	
+	
+    <button id="i_reset_credentials">Set Credentials</button>
+	<button id="i_set_reservations">Set Reservations</button>
+	<button id="i_show_reservations">Show Reservations</button>
+	<button id="i_reset_all">Reset All</button>
+   <script src="popup.js"></script>
+  </body>
+</html>
