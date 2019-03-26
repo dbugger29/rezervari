@@ -1,1 +1,3 @@
-# rezervari
+- [x] Verificat mesaje de eroare
+- [ ] Verificare cu calculatorul locked
+- [ ] Verifcare nume ora + ora am/pm

@@ -85,12 +85,7 @@ var ResetAll = () => {
 	chrome.storage.sync.set({"worldclass_rezervations": null}, () =>  {
 		chrome.storage.sync.set({"worldclass_email": null}, () => {
 			chrome.storage.sync.set({"worldclass_pass": null}, () => {
-				chrome.alarms.getAll( (alarms) => {
-					for(let alr in alarms)
-					{
-						chrome.alarms.clear(alr.name, () => {});
-					}
-				});
+				chrome.alarms.clearAll( () => {});
 			});
 		});
 	});

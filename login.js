@@ -174,29 +174,6 @@ function GotoPage( clbk )
 		carryon();
 }
 
-/*
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-	if("current_alarm_name" in message && message.current_alarm_name)
-	{
-		current_alarm_name = message.current_alarm_name;
-		ReadLocalSettings( (error) =>
-		{
-			 if(error) console.info(error);
-			//await LogoutPage();
-			 CheckLoginPage( (error) =>
-			 {
-				if(error) console.info(error);
-				GotoPage( (error) =>
-				{
-					if(error) console.info(error);
-				});
-			 });
-		});
-	}
-});
-
-*/
-
 chrome.runtime.onMessage.addListener(notify);
 
 function notify(message) 

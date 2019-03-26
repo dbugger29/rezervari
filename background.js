@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 'use strict';
-var settings = {BEFORE_TIME_REZERVATION : 10000};
+var settings = {BEFORE_TIME_REZERVATION : 10000}; // for login 
 
  chrome.runtime.onInstalled.addListener(function() {
 	// to do here - maybe reload background or reset?
@@ -40,23 +40,63 @@ var createDate = (day, hours) =>
 	return return_date;
 }
 
+ var restart_alarm = (alarm_name, b_restart_all) => {
+	
+	var set_alarms = () => {
+		chrome.storage.sync.get(["worldclass_rezervations" ], function(result) {
+			if(b_restart_all)
+			{
+				for(let key in result.worldclass_rezervations) 
+				{
+					//if( "day" in changes.worldclass_rezervations[key] )
+					//{
+						alert(JSON.stringify(changes.worldclass_rezervations[key]));
+						let alarm_name = changes.worldclass_rezervations[key].alarm_name;
+						let alarm_time = createDate(changes.worldclass_rezervations[key].day, changes.worldclass_rezervations[key].time);
+						//console.info(alarm_name, alarm_time);
+						chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
+					// }
+				}
+			}
+			else
+			{
+				for(let key in result.worldclass_rezervations) 
+				{
+					if(alarm_name == changes.worldclass_rezervations[key].alarm_name )
+					{
+						alert(JSON.stringify(changes.worldclass_rezervations[key]));
+						let alarm_name = changes.worldclass_rezervations[key].alarm_name;
+						let alarm_time = createDate(changes.worldclass_rezervations[key].day, changes.worldclass_rezervations[key].time);
+						//console.info(alarm_name, alarm_time);
+						chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
+						break;
+					}
+				}
+			}
+		});
+	}
+	
+	var b_clear_alarms = (wasCleared) =>
+	{
+		if(!wasCleared) 
+			throw "Alarms were not cleared";
+		else
+			set_alarms();
+	};
+	
+	if( b_restart_all )
+			chrome.alarms.clearAll( b_clear_alarms);
+	else
+		if(alarm_name)
+			chrome.alarms.clear(alarm_name, b_clear_alarms);
+ }
+
 chrome.storage.onChanged.addListener(function(changes, namespace) {
 	
-	console.info(changes, namespace);
-	//creca aici trebuie scoase alarmele vechi
+	console.info(changes, namespace);	
 	if("worldclass_rezervations" in changes && "newValue" in changes.worldclass_rezervations )
 	{
-		for(let key in changes.worldclass_rezervations.newValue) {
-			if( "day" in changes.worldclass_rezervations.newValue[key] )
-			{
-				alert(JSON.stringify(changes.worldclass_rezervations.newValue[key]));
-			//	alert(key);
-				let alarm_name = changes.worldclass_rezervations.newValue[key].alarm_name;
-				let alarm_time = createDate(changes.worldclass_rezervations.newValue[key].day, changes.worldclass_rezervations.newValue[key].time);
-				//console.info(alarm_name, alarm_time);
-				chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
-			}
-		}
+		restart_alarm(null, true);//restart all alarms
 	}
 	else
 	{
@@ -64,44 +104,26 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 		//alert("Values changed but not worldclass_rezervations");
 	}
  });
- var restart_alarm = (alarm_name) => {
-	 //TO DO HERE
-	//let alarm_name = changes.worldclass_rezervations.newValue[key].alarm_name;
-	//let alarm_time = createDate(changes.worldclass_rezervations.newValue[key].day, changes.worldclass_rezervations.newValue[key].time);
-	//console.info(alarm_name, alarm_time);
-	//chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
- }
+
 chrome.alarms.onAlarm.addListener(function(alarm)
 {
-	chrome.tabs.create({"url":"https://members.worldclass.ro/member-schedule.php"}, (tab) =>
+	var alarm_start_date = new Date();
+	chrome.tabs.create({"url":"https://members.worldclass.ro/"}, (tab) =>
 	{
-		
-		chrome.storage.sync.set({"worldclass_current_alarm": alarm.name, "worldclass_alarm_status":0 });
-		/*
-		setTimeout( () => {
-			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-				chrome.tabs.sendMessage(tabs[0].id, { current_alarm_name : alarm.name }, function(response) {
-					console.log('success');
-				});
-			});
-		}, 1000);
-		
-		//chrome.tabs.sendMessage(tab.id, { current_alarm_name : alarm.name }, {frameId: 0});
-		/*
-		setTimeout( () => {
-			console.info("intraaa aiiici");
-			chrome.tabs.executeScript(tab.id, {code:"current_alarm_name= '" + alarm.name+"';"},() => {
-				
-				chrome.tabs.executeScript(tab.id, {
-					file: 'login.js'
-				}, () => {}); 
-			});
-		}, 1000);
-		*/
-		// recreate alarm
+		chrome.storage.sync.set({"worldclass_current_alarm": alarm.name, "worldclass_alarm_status":-1 });
+		let time_to_rezervation = settings.BEFORE_TIME_REZERVATION -(new Date() - alarm_start_date);
+		time_to_rezervation = time_to_rezervation > 0 ? time_to_rezervation : 0;
 		setTimeout( () =>
 		{
-			restart_alarm(alarm.name);
-		}, 50*1000);
+			chrome.tabs.create({"url":"https://members.worldclass.ro/member-schedule.php"}, (tab) =>
+			{
+				chrome.storage.sync.set({"worldclass_current_alarm": alarm.name, "worldclass_alarm_status":0 });
+				// recreate alarm
+				setTimeout( () =>
+				{
+					restart_alarm(alarm.name, false);
+				}, 10000); // peste 10 secunde
+			});
+		}, time_to_rezervation);
 	});
 });
