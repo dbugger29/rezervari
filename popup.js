@@ -46,6 +46,20 @@ var SetReservations = () => {
 	
 		document.getElementById("create_reservations").style.display = "block";
 }
+var CheckTime = (sTime) => {
+	var returnTime = sTime;
+	if( /\d\d:\d\d (AM|PM)*/g.exec(sTime) )
+	{
+		let p_hour = sTime.split(":");
+		let hour = parseInt(p_hour[0]);
+		let minutes = parseInt(p_hour[1]);
+		if( sTime.indexOf("PM") > 0 )
+			returnTime = (hour + 12).toString() + ":" + p_hour[1];
+		else
+			returnTime = p_hour[0] + ":" +p_hour[1].split(" ")[0];
+	}
+	return returnTime;
+}
 
 var AddReservations = () => {
 	
@@ -62,7 +76,7 @@ var AddReservations = () => {
 			result.worldclass_rezervations.push(
 				{
 					"day" 			: rez_day,
-					"time" 			: rez_time,
+					"time" 			: CheckTime(rez_time),
 					"name"			: rez_name,
 					"alarm_name"	:rez_day + rez_time
 				});

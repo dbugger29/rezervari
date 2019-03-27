@@ -121,7 +121,7 @@ var submit_hour = (day, hour, class_name, clbk) =>
 			//verify for parallel classes
 			for(let idc = 0; idc< cells.length; idc++)
 			{
-				if(cells[idc].parent().find(".class-title:contains('" + class_name.toUpperCase() + "')").length >0 )
+				if($(cells[idc]).parent().find(".class-title:contains('" + class_name.toUpperCase() + "')").length >0 )
 				{
 					cell = cells[idc];
 					break;
@@ -147,12 +147,14 @@ var submit_hour = (day, hour, class_name, clbk) =>
 				return clbk("not correct format");
 		}, 550);
 };
+
 var goto_iasi = ( clbk) => 
 {
 		$('#clubid').find('option:contains("World Class Iasi")').prop({selected: true});
 		document.getElementById('clubs-form').submit();
 };
-	
+
+/*	
 function GotoPage( clbk )
 {
 	
@@ -197,6 +199,7 @@ function notify(message)
 		});
 	}
 }
+*/
 
 var handler_errors = (err) => {
 	if(err)
@@ -212,9 +215,18 @@ chrome.storage.sync.get(["worldclass_current_alarm","worldclass_alarm_status"], 
 	{
 		console.info("it begins");
 		current_alarm_name = result.worldclass_current_alarm;
-		console.info(current_alarm_name);
+		console.info(current_alarm_name, result.worldclass_alarm_status);
 		switch(result.worldclass_alarm_status)
 		{
+			
+			
+			case -1:
+					ReadLocalSettings( (error) => {
+						chrome.storage.sync.set({worldclass_alarm_status:0}, () => {
+							CheckLoginPage(handler_errors);
+						});
+					});
+					break;
 			case 0:
 					chrome.storage.sync.set({worldclass_alarm_status:1}, () => {
 						goto_iasi(handler_errors);

@@ -30,7 +30,7 @@ var createDate = (day, hours) =>
 	let minutes = parseInt(p_hour[1]);
 	//console.info(hour, minutes);
 	//if(hour > 2) - it should never happen
-	return_date.setHours( hour - 2 );
+		return_date.setHours( hour - 2 );
 	return_date.setMinutes(minutes);
 	//console.info(return_date);
 	//to do here - 20 sec
@@ -48,11 +48,11 @@ var createDate = (day, hours) =>
 			{
 				for(let key in result.worldclass_rezervations) 
 				{
-					//if( "day" in changes.worldclass_rezervations[key] )
+					//if( "day" in result.worldclass_rezervations[key] )
 					//{
-						alert(JSON.stringify(changes.worldclass_rezervations[key]));
-						let alarm_name = changes.worldclass_rezervations[key].alarm_name;
-						let alarm_time = createDate(changes.worldclass_rezervations[key].day, changes.worldclass_rezervations[key].time);
+						alert(JSON.stringify(result.worldclass_rezervations[key]));
+						let alarm_name = result.worldclass_rezervations[key].alarm_name;
+						let alarm_time = createDate(result.worldclass_rezervations[key].day, result.worldclass_rezervations[key].time);
 						//console.info(alarm_name, alarm_time);
 						chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
 					// }
@@ -62,11 +62,11 @@ var createDate = (day, hours) =>
 			{
 				for(let key in result.worldclass_rezervations) 
 				{
-					if(alarm_name == changes.worldclass_rezervations[key].alarm_name )
+					if(alarm_name == result.worldclass_rezervations[key].alarm_name )
 					{
-						alert(JSON.stringify(changes.worldclass_rezervations[key]));
-						let alarm_name = changes.worldclass_rezervations[key].alarm_name;
-						let alarm_time = createDate(changes.worldclass_rezervations[key].day, changes.worldclass_rezervations[key].time);
+						alert(JSON.stringify(result.worldclass_rezervations[key]));
+						let alarm_name = result.worldclass_rezervations[key].alarm_name;
+						let alarm_time = createDate(result.worldclass_rezervations[key].day, result.worldclass_rezervations[key].time);
 						//console.info(alarm_name, alarm_time);
 						chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
 						break;
@@ -122,7 +122,7 @@ chrome.alarms.onAlarm.addListener(function(alarm)
 				setTimeout( () =>
 				{
 					restart_alarm(alarm.name, false);
-				}, 10000); // peste 10 secunde
+				}, 60000); // peste 60 secunde
 			});
 		}, time_to_rezervation);
 	});
