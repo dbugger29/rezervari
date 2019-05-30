@@ -1,7 +1,7 @@
 {
   "name": "Worldclass Rezervari",
   "description": "Face rezervari",
-  "version": "1.0",
+  "version": "2.0",
   "manifest_version": 2,
   "permissions": ["alarms", "notifications", "webNavigation","tabs", "http://*/*", "https://*/*", "storage" ],
   "background": {
