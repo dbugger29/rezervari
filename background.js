@@ -66,14 +66,12 @@ var createDate = (day, hours, next_week) =>
 			{
 				for(let key in result.worldclass_rezervations) 
 				{
-					//if( "day" in result.worldclass_rezervations[key] )
-					//{
-						//console.info(JSON.stringify(result.worldclass_rezervations[key]));
-						let alarm_name = result.worldclass_rezervations[key].alarm_name;
-						let alarm_time = createDate(result.worldclass_rezervations[key].day, result.worldclass_rezervations[key].time);
-						//console.info(alarm_name, alarm_time);
-						chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
-					// }
+						if( result.worldclass_rezervations[key].enabled == true || !("enabled" in result.worldclass_rezervations[key]) )
+						{
+							let alarm_name = result.worldclass_rezervations[key].alarm_name;
+							let alarm_time = createDate(result.worldclass_rezervations[key].day, result.worldclass_rezervations[key].time);
+							chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
+						}
 				}
 			}
 			else
@@ -82,12 +80,15 @@ var createDate = (day, hours, next_week) =>
 				{
 					if(alarm_name == result.worldclass_rezervations[key].alarm_name )
 					{
-						//console.info(JSON.stringify(result.worldclass_rezervations[key]));
-						let alarm_name = result.worldclass_rezervations[key].alarm_name;
-						let alarm_time = createDate(result.worldclass_rezervations[key].day, result.worldclass_rezervations[key].time);
-						//console.info(alarm_name, alarm_time);
-						chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
-						break;
+						if( result.worldclass_rezervations[key].enabled == true || !("enabled" in result.worldclass_rezervations[key])  )
+						{
+							//console.info(JSON.stringify(result.worldclass_rezervations[key]));
+							let alarm_name = result.worldclass_rezervations[key].alarm_name;
+							let alarm_time = createDate(result.worldclass_rezervations[key].day, result.worldclass_rezervations[key].time);
+							//console.info(alarm_name, alarm_time);
+							chrome.alarms.create(alarm_name, {"when": alarm_time/1 });
+							break;
+						}
 					}
 				}
 			}
@@ -96,10 +97,12 @@ var createDate = (day, hours, next_week) =>
 	
 	var b_clear_alarms = (wasCleared) =>
 	{
-		if(!wasCleared) 
-			throw "Alarms were not cleared";
-		else
-			set_alarms();
+		if(!wasCleared)
+		{
+			console.info("Alarms were not cleared");
+			alert("Alarms were not cleared");
+		}
+		return set_alarms();
 	};
 	
 	if( b_restart_all )

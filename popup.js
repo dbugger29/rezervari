@@ -55,17 +55,59 @@ var AddReservations = () => {
 					"day" 			: rez_day,
 					"time" 			: CheckTime(rez_time),
 					"name"			: rez_name,
-					"alarm_name"	:rez_day + rez_time
+					"alarm_name"	:rez_day + rez_time,
+					"enabled"		:true
 				});
 			chrome.storage.sync.set({"worldclass_rezervations": result.worldclass_rezervations}, function() {
 					document.getElementById("create_reservations").style.display = "none";
 			});
 	});
 }
-
-var ShowReservations = () => {
+var SaveModificationsReservations = () => {
+	console.info("intra aiiiicii");
+	var saved_alarms = document.querySelectorAll("#current_reservations input[type=checkbox]:checked");
+	console.info(saved_alarms);
+	var new_alarms = [];
+	for(var idz=0; idz< saved_alarms.length;idz++ )
+	{
+		new_alarms.push(saved_alarms[idz].value);
+	}
+	console.info(new_alarms, new_alarms.length);
 	chrome.storage.sync.get(["worldclass_rezervations" ], function(result) {
-		alert(JSON.stringify(result));
+			for(var idy=0; idy< result.worldclass_rezervations.length; idy++)
+			{
+				
+				if( new_alarms.indexOf(result.worldclass_rezervations[idy].alarm_name) >= 0 )
+				{
+					result.worldclass_rezervations[idy].enabled = true;
+				}
+				else
+				{
+					result.worldclass_rezervations[idy].enabled = false;
+				}
+			}
+			chrome.storage.sync.set({"worldclass_rezervations": result.worldclass_rezervations}, function() {
+					alert("Reservations saved!!!");
+					document.getElementById("current_reservations").style.display = "none";
+			});
+	});
+}
+var ShowReservations = () => {
+	document.getElementById("current_reservations").style.display = "block";
+	
+	chrome.storage.sync.get(["worldclass_rezervations" ], function(result) {
+		console.info(JSON.stringify(result.worldclass_rezervations));
+		var html_result = "<br/><b>Rezervari:</b><br/>";
+		for(var idx=0; idx< result.worldclass_rezervations.length; idx++)
+		{
+			//to do here
+			var checked = "enabled" in result.worldclass_rezervations[idx]? result.worldclass_rezervations[idx].enabled:true;
+			if(checked) checked ="checked";
+			html_result +='<input type="checkbox" value="'+result.worldclass_rezervations[idx].alarm_name+'" name="'+result.worldclass_rezervations[idx].alarm_name + '" ' +checked+'>'+ JSON.stringify(result.worldclass_rezervations[idx]) +'<br/><br/>';
+		}
+		html_result +='<button id="i_save_modifications_reservations">Save</button>';
+		document.getElementById("current_reservations").innerHTML = html_result;
+		document.getElementById('i_save_modifications_reservations').addEventListener('click', SaveModificationsReservations);
 	});
 }
 
