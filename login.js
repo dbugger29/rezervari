@@ -78,14 +78,16 @@ function ReadLocalSettings( clbk )
 }
  function CheckLoginPage( clbk )
 {
-	if(settings.email)
+	console.info("intra in checkLogin");
+	console.info(settings.worldclass_email);
+	if(settings.worldclass_email)
 	{
 		$(document).ready( () =>
 		{
 			if($("#email"))
 			{
-				$("#email").val(settings.email);
-				$("#pincode").val(settings.password);
+				$("#email").val(settings.worldclass_email);
+				$("#pincode").val(settings.worldclass_pass);
 				$('[type=submit]').click();
 				return clbk();
 			}
@@ -204,7 +206,8 @@ function notify(message)
 var handler_errors = (err) => {
 	if(err)
 	{
-		window.alert(err);
+		//window.alert(err);
+		setTimeout("alert('"+err+"');", 1);
 		console.info(err);
 	}
 }
@@ -222,22 +225,19 @@ chrome.storage.sync.get(["worldclass_current_alarm","worldclass_alarm_status"], 
 			
 			case -1:
 					ReadLocalSettings( (error) => {
-						chrome.storage.sync.set({worldclass_alarm_status:0}, () => {
-							CheckLoginPage(handler_errors);
-						});
+						CheckLoginPage(handler_errors);
+						chrome.storage.sync.set({worldclass_alarm_status:0}, () => {});
 					});
 					break;
 			case 0:
-					chrome.storage.sync.set({worldclass_alarm_status:1}, () => {
-						goto_iasi(handler_errors);
-					});
+					goto_iasi(handler_errors);
+					chrome.storage.sync.set({worldclass_alarm_status:1}, () => {});
 					break;
 			case 1:
 					ReadLocalSettings( (error) => {
 						console.info(settings);
-						chrome.storage.sync.set({worldclass_alarm_status:2}, () => {
-							submit_hour(settings.current_alarm.day, settings.current_alarm.time, settings.current_alarm.name, handler_errors);
-						});
+						submit_hour(settings.current_alarm.day, settings.current_alarm.time, settings.current_alarm.name, handler_errors);
+						chrome.storage.sync.set({worldclass_alarm_status:2}, () => {});
 					});
 					break;
 			case 2: //time to delete alarmname and all
