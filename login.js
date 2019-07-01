@@ -116,7 +116,7 @@ var submit_hour = (day, hour, class_name, clbk) =>
 		}
 		if(zi =="") return clbk("parameters not correct");
 		let current_column = $('.weekday:contains("' + zi + '")').parent().parent();
-		var cells =  $(current_column).find(".class-hours:contains('" + hour + "')");
+		var cells =  $(current_column).find(".class-hours:contains('" + hour + " -')");
 		let cell= cells;
 		if(cells.length > 1)
 		{
@@ -131,6 +131,7 @@ var submit_hour = (day, hour, class_name, clbk) =>
 			}
 		}
 		cell = $(cell).parent().parent();
+		console.info(cell);
 		if(!cell) return clbk("cell not found");
 		var crt_button = $(cell).find(".btn-book-class:contains('REZERVA')");
 		if(!crt_button)	return clbk("button not found");
